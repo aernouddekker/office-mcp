@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/imagegen"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "clean": "rm -rf packages/*/dist"
+  }
+}
