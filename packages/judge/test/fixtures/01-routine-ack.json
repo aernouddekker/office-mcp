@@ -1,0 +1,20 @@
+{
+  "name": "routine-ack",
+  "expected": { "verdict": "allow", "policy_includes_any_of": ["W1"] },
+  "input": {
+    "action_type": "email_send",
+    "proposal": {
+      "from_account": "aernoud@inheritor.app",
+      "to": "marit@klantbedrijf.nl",
+      "recipient_class": "known_business_contact",
+      "subject": "Re: Pitchdeck ontvangen",
+      "body": "Dank, ik laat morgen weten of we de pitch een week kunnen vooruitschuiven.",
+      "in_reply_to_summary": "Marit stuurde de pitchdeck en vroeg of de pitch volgende week kan plaatsvinden.",
+      "intent_class": "acknowledgement",
+      "commitments": [],
+      "attachments": [],
+      "actor_justification": "Short acknowledgement to a known business contact; no commitments made."
+    },
+    "actor_first_pass_verdict": "allow"
+  }
+}

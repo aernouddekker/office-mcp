@@ -1,7 +1,9 @@
 {
   "private": true,
   "workspaces": [
-    "packages/imagegen"
+    "packages/imagegen",
+    "packages/judge",
+    "packages/transcribe"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
