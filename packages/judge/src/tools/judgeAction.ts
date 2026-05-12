@@ -61,6 +61,23 @@ Hard rules:
 - "escalate" is for cases the policy does not cover or where a human must decide.
 - "revise" is for fixable issues — state specific edits in revision_notes.
 
+TRUST-CLASS MAPPING (wire enum ↔ policy classes):
+
+The proposal carries a recipient_class field with one of 5 wire-enum values: known_business_contact, known_personal, vendor, unknown, suspected_spam. The policy files may use a broader vocabulary of trust classes (for example "insider / co-director", "active partnership counterpart", "government / regulator"). The actor task collapses those down to the 5 wire values before sending the proposal. The full matrix class is restated verbatim in the actor_justification field — read it there. The collapse is intentional and is NOT an inconsistency to flag.
+
+Documented 9→5 collapse:
+- insider / co-director → known_business_contact
+- known business contact → known_business_contact
+- active partnership counterpart → known_business_contact
+- vendor / supplier → vendor
+- government / regulator → known_business_contact
+- staff / worker → known_business_contact
+- identified prospect → known_business_contact
+- unknown / public → unknown
+- suspected spam → suspected_spam
+
+When evaluating, treat the matrix class stated in actor_justification as the authoritative trust-class signal and the wire enum as a regularising hint that loses fidelity by design. Do NOT flag the gap between wire enum and matrix class as an inconsistency, and do not write "internally inconsistent" in your reason on that basis. If the actor_justification omits a matrix class entirely (older actor versions), fall back to the wire enum and proceed normally.
+
 GROUNDING RULES (strict — your output is audited):
 - Every entry in policy_matched MUST be a verbatim substring of the policy text shown below between the === POLICY === markers. If you cannot quote it, you cannot cite it. Do not invent rule labels (no "W1", "E4", "R2", etc.) that do not appear in the policy text. Do not generalise ("all outbound to X requires review") beyond what the policy text says.
 - Quote the shortest distinctive phrase from the policy that supports your verdict. Headers (e.g. "## Always-escalate") and rule labels (e.g. "E1 legal-keywords") are fine as long as they appear verbatim. Paraphrased descriptions in policy_matched are not.
