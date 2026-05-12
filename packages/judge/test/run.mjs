@@ -65,8 +65,22 @@ async function runOne(fixture) {
 
 const INTERNAL_LABEL_RE = /^(default(:[^\s]+)?|fail-closed:[^\s]+|validator:[^\s]+)$/i;
 
+// Mirror of normalizeForCompare in src/tools/judgeAction.ts. Keep in sync.
 function normalizeForCompare(s) {
-  return s.toLowerCase().replace(/\s+/g, " ").trim();
+  return s
+    .toLowerCase()
+    .replace(/\*\*/g, "")
+    .replace(/__/g, "")
+    .replace(/\*/g, "")
+    .replace(/`/g, "")
+    .replace(/\s*\|\s*/g, " ")
+    .replace(/^#+\s+/gm, "")
+    .replace(/^\s*-\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/(^|[\s.,;:!?"'()\[\]{}])_/g, "$1")
+    .replace(/_($|[\s.,;:!?"'()\[\]{}])/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function matchExpected(verdict, expected, policyText) {

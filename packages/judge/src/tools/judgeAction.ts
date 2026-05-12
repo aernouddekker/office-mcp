@@ -79,8 +79,10 @@ Documented 9→5 collapse:
 When evaluating, treat the matrix class stated in actor_justification as the authoritative trust-class signal and the wire enum as a regularising hint that loses fidelity by design. Do NOT flag the gap between wire enum and matrix class as an inconsistency, and do not write "internally inconsistent" in your reason on that basis. If the actor_justification omits a matrix class entirely (older actor versions), fall back to the wire enum and proceed normally.
 
 GROUNDING RULES (strict — your output is audited):
-- Every entry in policy_matched MUST be a verbatim substring of the policy text shown below between the === POLICY === markers. If you cannot quote it, you cannot cite it. Do not invent rule labels (no "W1", "E4", "R2", etc.) that do not appear in the policy text. Do not generalise ("all outbound to X requires review") beyond what the policy text says.
-- Quote the shortest distinctive phrase from the policy that supports your verdict. Headers (e.g. "## Always-escalate") and rule labels (e.g. "E1 legal-keywords") are fine as long as they appear verbatim. Paraphrased descriptions in policy_matched are not.
+- Every entry in policy_matched MUST be a verbatim substring of the policy text shown below between the === POLICY === markers. If you cannot quote it, you cannot cite it. Do not invent rule labels that do not appear in the policy text. Do not generalise ("all outbound to X requires review") beyond what the policy text says.
+- Citation preference, in order: (1) a rule label or header that appears verbatim in the policy ("W1 ack-to-known-business", "E4 goswin-flagged", "Insider / co-director", "## Always-escalate"); (2) a short distinctive clause from the rule body ("Mirror the language of the inbound message"); (3) only if no label or short clause anchors the rule, a longer quote. SHORT IS SAFER. Long quotes risk being remembered imperfectly and produced with subtly altered characters — which the grounding validator will catch and your verdict will be discarded.
+- Never emit a character in a citation that you are not certain appears verbatim in the policy. If you are uncertain about the exact characters of a phrase, fall back to a short label or set verdict="escalate" with policy_matched=["default:no-match"].
+- Markdown formatting characters (** bold, | table separators, leading - or # markers, backticks) in the source policy are normalised away during grounding. Quote the readable content; do not include the formatting characters in your citation, but you also don't have to strip them — both forms validate.
 - The reason field must paraphrase or quote a specific clause from the policy, not invent a generalisation. If you reference a rule, the rule must be visible in the policy text.
 - If no policy clause clearly applies, you must NOT invent one. Set verdict="escalate", reason="no matching policy clause", policy_matched=["default:no-match"].
 - These reserved labels bypass the verbatim-substring rule and may be used when applicable: "default:no-match", "fail-closed:*", "validator:*". Do not use them for normal verdicts.
@@ -115,8 +117,26 @@ function failClosedVerdict(reason: string): Verdict {
 
 const INTERNAL_LABEL_RE = /^(default(:[^\s]+)?|fail-closed:[^\s]+|validator:[^\s]+)$/i;
 
+// Normalises text for citation substring comparison.
+// Strips markdown formatting so the model's clean quotes (which drop **bold**, |
+// table cells, etc.) still validate against the markdown-formatted policy source.
+// Protects identifier underscores (known_business_contact) by only stripping
+// underscores adjacent to whitespace/punctuation, not between letters/digits.
 function normalizeForCompare(s: string): string {
-  return s.toLowerCase().replace(/\s+/g, " ").trim();
+  return s
+    .toLowerCase()
+    .replace(/\*\*/g, "")
+    .replace(/__/g, "")
+    .replace(/\*/g, "")
+    .replace(/`/g, "")
+    .replace(/\s*\|\s*/g, " ")
+    .replace(/^#+\s+/gm, "")
+    .replace(/^\s*-\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/(^|[\s.,;:!?"'()\[\]{}])_/g, "$1")
+    .replace(/_($|[\s.,;:!?"'()\[\]{}])/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function validateCitations(verdict: Verdict, policy: string): Verdict {
