@@ -27,6 +27,7 @@ Each server runs over stdio. Launch via `node packages/<name>/dist/index.js`.
 | Package | npm name | Purpose |
 |---------|----------|---------|
 | `packages/imagegen` | `@aernoud/imagegenmcp` | OpenAI Images API (`gpt-image-1.5` / `gpt-image-2`, DALL·E) — text-to-image |
+| `packages/print` | `@aernoud/printmcp` | macOS CUPS wrapper (`lp` / `lpstat` / `lpoptions` / `cancel`) — printer discovery and file printing |
 
 ## Key Constraints
 

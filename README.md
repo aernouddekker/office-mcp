@@ -18,6 +18,20 @@ Generate PNG images from text prompts via OpenAI's Images API.
 
 **Billing:** calls hit the OpenAI Platform wallet — *not* ChatGPT Plus/Pro.
 
+### Print (`@aernoud/printmcp`)
+
+Wraps the macOS CUPS print system (`lp`, `lpstat`, `lpoptions`, `cancel`). Discovers any printer the Mac knows about — local USB, network, AirPrint, shared from another Mac. No AppleScript involved; runs as a shell wrapper.
+
+| Tool | Description |
+|------|-------------|
+| `list-printers` | List all CUPS printers with status, location, default flag |
+| `get-printer-options` | List supported PPD options for a printer (sides, media size, color mode, …) with current defaults |
+| `print-file` | Print a local file (PDF, plain text, JPEG/PNG, PostScript) with copies, duplex, paper size, page ranges, fit-to-page, and arbitrary `lp` options |
+| `list-print-jobs` | List active print jobs (optionally filtered to a printer) |
+| `cancel-print-job` | Cancel a queued or printing job by id |
+
+Composes naturally with the `mailappmcp` server in [osx-mcp](https://github.com/aernouddekker/osx-mcp): e.g. *"print the attachment of the latest email from Hadi"* — search the message, `save-attachment` to a temp dir, then `print-file`.
+
 ## Install
 
 ```bash
@@ -35,15 +49,20 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
     "imagegen": {
       "command": "node",
       "args": ["/Users/aernouddekker/Development/office-mcp/packages/imagegen/dist/index.js"]
+    },
+    "printmcp": {
+      "command": "node",
+      "args": ["/Users/aernouddekker/Development/office-mcp/packages/print/dist/index.js"]
     }
   }
 }
 ```
 
-Restart Claude Desktop. The `generate-image` tool will appear in the tool list.
+Restart Claude Desktop. The new tools will appear in the tool list.
 
 ## Claude Code configuration
 
 ```bash
 claude mcp add imagegen node /Users/aernouddekker/Development/office-mcp/packages/imagegen/dist/index.js
+claude mcp add printmcp node /Users/aernouddekker/Development/office-mcp/packages/print/dist/index.js
 ```

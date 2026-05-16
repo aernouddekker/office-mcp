@@ -3,7 +3,8 @@
   "workspaces": [
     "packages/imagegen",
     "packages/judge",
-    "packages/transcribe"
+    "packages/transcribe",
+    "packages/print"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
